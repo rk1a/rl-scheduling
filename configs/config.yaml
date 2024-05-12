@@ -1,0 +1,12 @@
+defaults:
+    - _self_
+    - env: job_shop
+
+agent: a2c
+
+seed: 0
+
+logger:
+    type: tensorboard
+    save_checkpoint: true
+    name: ${agent}_${env.name}

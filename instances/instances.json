@@ -1,0 +1,37 @@
+[
+    {
+        "name": "jum01",
+        "jobs": 5,
+        "machines": 4,
+        "optimum": 8,
+        "path": "instances/jum01.txt"
+    },
+    {
+        "name": "la10",
+        "jobs": 15,
+        "machines": 5,
+        "optimum": 958,
+        "path": "instances/la10.txt"
+    },
+    {
+        "name": "orb01",
+        "jobs": 10,
+        "machines": 10,
+        "optimum": 1059,
+        "path": "instances/orb01.txt"
+    },
+    {
+        "name": "swv01",
+        "jobs": 20,
+        "machines": 10,
+        "optimum": 1407,
+        "path": "instances/swv01.txt"
+    },
+    {
+        "name": "ta01",
+        "jobs": 15,
+        "machines": 15,
+        "optimum": 1231,
+        "path": "instances/ta01.txt"
+    }
+]

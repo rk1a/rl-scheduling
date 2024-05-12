@@ -1,0 +1,46 @@
+name: job_shop
+registered_version: JobShop-v0
+
+instance:
+    name: ta01
+    # when setting this to a non-zero value the durations of the instance
+    # are changed randomly by the given percentage (increase and deacrease)
+    random_duration_change: 0.
+
+slowdown:
+    # when setting these parameters to non-zero values machine slowdown can occur:
+    # at each step a machine slows down with the specified probability
+    # the durations of operations that have not been procesesed will increase
+    # by the given percentage
+    prob_per_step: 0.  # probability per step that a machine slows down
+    percentage: 0.  # percentage by which the machine slows down
+
+network:
+    num_layers_machines: 1
+    num_layers_operations: 1
+    num_layers_joint_machines_jobs: 2
+    transformer_num_heads: 4
+    transformer_key_size: 8
+    transformer_mlp_units: [512]
+
+training:
+    num_epochs: 65
+    num_learner_steps_per_epoch: 200
+    n_steps: 10
+    total_batch_size: 32
+
+evaluation:
+    eval_total_batch_size: 64
+    greedy_eval_total_batch_size: 64
+    cp_baseline: True  # whether to add a CP baseline
+    cp_solver: gecode
+    cp_timelimit: 1000  # in milliseconds
+
+a2c:
+    normalize_advantage: True 
+    discount_factor: 0.99
+    bootstrapping_factor: 0.95
+    l_pg: 1.0
+    l_td: 1.0
+    l_en: 0.01
+    learning_rate: 1e-6
