@@ -33,5 +33,12 @@
         "machines": 15,
         "optimum": 1231,
         "path": "instances/ta01.txt"
+    },
+    {
+        "name": "ft06",
+        "jobs": 6,
+        "machines": 6,
+        "optimum": 55,
+        "path": "instances/ft06.txt"
     }
 ]
