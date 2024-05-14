@@ -1,7 +1,7 @@
 # Reinforcement Learning for Scheduling
 
+This repo is meant as a starting point for exploring reinforcement learning techniques for solving scheduling problems.
 Extends [Jumanji's JobShop environment](https://instadeepai.github.io/jumanji/environments/job_shop/) with dynamic features, support for benchmark instances and comparison against CP solvers.
-The repo is meant as a starting point for exploring reinforcement learning techniques for solving scheduling problems.
 
 ## Installation
 
@@ -24,7 +24,7 @@ python train.py
 ```
 Alternatively, you can use the [hydra command line interface](https://hydra.cc/docs/intro/) for configuration. For example, the following command sets the learning rate of the agent:
 ```bash
-python train.py env.a2c.learning_rate=1e-5
+python train.py env.a2c.learning_rate=1e-6
 ```
 
 View metrics and schedules in tensorboard:

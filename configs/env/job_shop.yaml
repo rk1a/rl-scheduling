@@ -2,7 +2,7 @@ name: job_shop
 registered_version: JobShop-v0
 
 instance:
-    name: ta01
+    name: ft06
     # when setting this to a non-zero value the durations of the instance
     # are changed randomly by the given percentage (increase and deacrease)
     random_duration_change: 0.
@@ -16,31 +16,47 @@ slowdown:
     percentage: 0.  # percentage by which the machine slows down
 
 network:
+    # there are three stages to the embedding network
+    # - self-attention layers of the machines remaining times
+    # - cross-attention layers of job properties with machines remaining times
+    # - self-attention of concatenated embeddings of the concatenation
     num_layers_machines: 1
     num_layers_operations: 1
     num_layers_joint_machines_jobs: 2
+    # parameters for a single transformer block:
     transformer_num_heads: 4
     transformer_key_size: 8
     transformer_mlp_units: [512]
 
 training:
+    # number of train/eval cycles
     num_epochs: 65
+    # number of consecutive learning iterations without evaluation
     num_learner_steps_per_epoch: 200
+    # number of SGD steps after sampling experience
     n_steps: 10
+    # number of parallel environments
     total_batch_size: 32
 
 evaluation:
+    # number of parallel environments
     eval_total_batch_size: 64
     greedy_eval_total_batch_size: 64
-    cp_baseline: True  # whether to add a CP baseline
-    cp_solver: gecode
+    # whether to add a CP baseline (requires MiniZinc)
+    cp_baseline: False
+    cp_solver: gecode  # which solver to use
     cp_timelimit: 1000  # in milliseconds
 
 a2c:
-    normalize_advantage: True 
+    learning_rate: 1e-5
     discount_factor: 0.99
-    bootstrapping_factor: 0.95
+    # Policy loss coefficient
     l_pg: 1.0
+    # Value function loss coefficient
     l_td: 1.0
+    # Entropy loss
     l_en: 0.01
-    learning_rate: 1e-6
+    # Coefficient of advantage estimate
+    bootstrapping_factor: 0.95
+    # Whether to normalize advantage estimates
+    normalize_advantage: True 
