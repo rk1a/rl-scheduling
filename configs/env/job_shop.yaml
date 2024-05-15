@@ -25,16 +25,16 @@ network:
     num_layers_joint_machines_jobs: 2
     # parameters for a single transformer block:
     transformer_num_heads: 4
-    transformer_key_size: 8
+    transformer_key_size: 32
     transformer_mlp_units: [512]
 
 training:
     # number of train/eval cycles
-    num_epochs: 65
+    num_epochs: 100
     # number of consecutive learning iterations without evaluation
-    num_learner_steps_per_epoch: 200
-    # number of SGD steps after sampling experience
-    n_steps: 10
+    num_learner_steps_per_epoch: 20
+    # number of transitions of a rollout
+    n_steps: 32
     # number of parallel environments
     total_batch_size: 32
 

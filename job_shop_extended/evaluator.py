@@ -142,12 +142,13 @@ class Evaluator:
             keys,
         )
         best_idx = eval_metrics["episode_return"].argmax()
-        best_final_state = jax.tree_util.tree_map(lambda x: x.at[best_idx].get(), final_states)
+        best_schedule_return = eval_metrics["episode_return"][best_idx]
+        best_schedule_final_state = jax.tree_util.tree_map(lambda x: x.at[best_idx].get(), final_states)
         eval_metrics: Dict = jax.lax.pmean(
             jax.tree_util.tree_map(jnp.mean, eval_metrics),
             axis_name="devices",
         )
-        eval_metrics.update({"best_final_state": best_final_state})
+        eval_metrics.update({"best_schedule_final_state": best_schedule_final_state, "best_schedule_return": best_schedule_return})
         return eval_metrics
 
     def run_evaluation(

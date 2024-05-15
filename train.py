@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pathlib
 from job_shop_extended.cp_utils import (
     create_job_shop_model,
     solve_job_shop,
@@ -167,6 +166,7 @@ def train(cfg: omegaconf.DictConfig, log_compiles: bool = False) -> None:
 
     optimum_makespan: int | None = None
     if isinstance(logger, TensorboardLogger):
+        logger.writer.add_text("config", "<pre>" + omegaconf.OmegaConf.to_yaml(cfg) + "</pre>")
         layout = {
             "Baseline": {
                 "makespan": ["Multiline", ["a2c/makespan", "cp/makespan", "optimum/makespan"]],
@@ -213,25 +213,33 @@ def train(cfg: omegaconf.DictConfig, log_compiles: bool = False) -> None:
 
             # Log schedule images and makespans of evaluation instance with lowest makespan
             if isinstance(logger, TensorboardLogger):
-                best_final_states = metrics["best_final_state"]
-                for eval_i in range(best_final_states.step_count.shape[0]):
-                    best_final_state = jax.tree_util.tree_map(
-                        lambda x: x.at[i].get(), best_final_states
+                best_schedule_final_states = metrics["best_schedule_final_state"]
+                for eval_i in range(best_schedule_final_states.step_count.shape[0]):
+                    best_schedule_final_state = jax.tree_util.tree_map(
+                        lambda x: x.at[i].get(), best_schedule_final_states
                     )
-                    a2c_makespan = best_final_state.step_count
-                    fig_a2c_schedule = env.unwrapped._viewer.render(best_final_state)
-                    logger.writer.add_figure(
-                        f"a2c/best_schedule_epoch{i}_eval{eval_i}_makespan{a2c_makespan}",
-                        fig_a2c_schedule,
-                        global_step=env_steps,
-                    )
-                    logger.writer.add_scalar("a2c/makespan", a2c_makespan, env_steps)
-                    if optimum_makespan is not None:
+                    best_schedule_return = metrics["best_schedule_return"][eval_i]
+                    # Only log finished schedules
+                    unfinished_schedule = -float(best_schedule_return) > int(best_schedule_final_state.step_count)
+                    if not unfinished_schedule:
+                        a2c_makespan = best_schedule_final_state.step_count
+                        fig_a2c_schedule = env.unwrapped._viewer.render(best_schedule_final_state)
+                        logger.writer.add_figure(
+                            f"a2c/best_schedule_epoch{i}_eval{eval_i}_makespan{a2c_makespan}",
+                            fig_a2c_schedule,
+                            global_step=env_steps,
+                        )
+                        logger.writer.add_scalar("a2c/makespan", a2c_makespan, env_steps)
+
+                    # Only log optimal makespan in case of deterministic job shop
+                    is_env_random = (cfg.env.instance.random_duration_change != 0.) or (cfg.env.slowdown.prob_per_step != 0.)
+                    if optimum_makespan is not None and not is_env_random:
                         logger.writer.add_scalar("optimum/makespan", optimum_makespan, env_steps)
 
                     if cfg.env.evaluation.cp_baseline:
-                        # Note: we assume that the input data didn't change during the rollout
-                        model_data = state_to_cp_model_data(best_final_state)
+                        # Note: in case of dynamic duration changes the CP solution is not
+                        # a comparable baseline since it has access to full information in hindsight
+                        model_data = state_to_cp_model_data(best_schedule_final_state)
                         model = create_job_shop_model(
                             data=model_data,
                         )
@@ -247,7 +255,7 @@ def train(cfg: omegaconf.DictConfig, log_compiles: bool = False) -> None:
                         )
                         cp_makespan = cp_schedule.objective
                         state_with_cp_schedule = set_scheduled_times_from_job_shop_schedule(
-                            best_final_state, cp_schedule
+                            best_schedule_final_state, cp_schedule
                         )
                         fig_cp_schedule = env.unwrapped._viewer.render(
                             state_with_cp_schedule
