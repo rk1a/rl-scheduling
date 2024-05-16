@@ -12,7 +12,7 @@ pip install -r requirements.txt
 ```
 
 MiniZinc is required for comparing to solutions of a CP solver.
-For installation instructions see [https://www.minizinc.org/software.html](https://www.minizinc.org/software.html).
+For installation instructions see [https://www.minizinc.org/](https://www.minizinc.org).
 
 ## Usage
 
@@ -32,18 +32,15 @@ View metrics and schedules in tensorboard:
 tensorboard --logdir .
 ```
 
-## Standalone use of the constrained programming (CP) model
+## Standalone use of the constrained programming model
 
 The CP model is written in the [MiniZinc language](https://www.minizinc.org/index.html).
 It is located in [minizinc/job_shop.mzn](minizinc/job_shop.mzn).
-There are two options to run the model:
-You can load the model file (.mzn) and an example data file (.dzn) into the MiniZinc IDE.
-While viewing the model file click the "Run" button and fill in the parameters / select the available data file.
-Alternatively, you can use the command line:
+To use a solver for an instance, modify and run:
 ```bash
-minizinc model.mzn data.dzn
+python cp_solver.py
 ```
 
-# Instance Data
+## Instance Data
 
 The instance data in [instances](instances) comes from https://github.com/tamy0612/JSPLIB.

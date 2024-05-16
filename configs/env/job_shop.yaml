@@ -10,7 +10,7 @@ instance:
 slowdown:
     # when setting these parameters to non-zero values machine slowdown can occur:
     # at each step a machine slows down with the specified probability
-    # the durations of operations that have not been procesesed will increase
+    # the durations of operations that have not been processed will increase
     # by the given percentage
     prob_per_step: 0.  # probability per step that a machine slows down
     percentage: 0.  # percentage by which the machine slows down
@@ -19,7 +19,7 @@ network:
     # there are three stages to the embedding network
     # - self-attention layers of the machines remaining times
     # - cross-attention layers of job properties with machines remaining times
-    # - self-attention of concatenated embeddings of the concatenation
+    # - self-attention of concatenated embeddings of the machines and jobs
     num_layers_machines: 1
     num_layers_operations: 1
     num_layers_joint_machines_jobs: 2
